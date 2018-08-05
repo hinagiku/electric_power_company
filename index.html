@@ -7,13 +7,13 @@
 <script src="./assets/xlsx.full.min.js"></script>
 
 <style>
-  th { font-size: 12px; }
-  td { font-size: 11px; }
+  th { font-size: 15px; text-align: center}
+  td { font-size: 14px; }
 </style>
 
 <button id="word" class="green">下载Word文档</button>
 <button id="excel" class="green">生成Excel文档</button>
-<div id="fileurl"></div>
+<!--<div id="fileurl"></div>-->
 
 <div id="example"></div>
 
@@ -29,13 +29,14 @@
     data.push(item);
   });
   csvStream.on('end', function () {
-    var inner_str = "<table id='example' class='display' style='width:100%'> <thead> <tr> <th width='2%'>操作</th> <th width='15%'>秘密事项</th> <th width='8%'>密级</th> <th width='8%'>保密期限</th> <th width='8%'>标密部门</th><th width='8%'>知悉范围</th> <th width='10%'>涉密岗位</th><th width='10%'>相关文件或材料</th><th width='10%'>报送方向</th><th width='10%'>报送频率及形式</th><th width='8%'>标注方式</th></tr></thead><tbody>";
+//    var inner_str = "<table id='example' class='display' style='width:100%'> <thead> <tr> <th width='2%'>操作</th> <th width='15%'>秘密事项</th> <th width='8%'>密级</th> <th width='8%'>保密期限</th> <th width='8%'>标密部门</th><th width='8%'>知悉范围</th> <th width='10%'>涉密岗位</th><th width='10%'>相关文件或材料</th><th width='10%'>报送方向</th><th width='10%'>报送频率及形式</th><th width='8%'>标注方式</th></tr></thead><tbody>";
+    var inner_str = "<table id='example' class='display' style='width:100%'> <thead> <tr> <th width='2%'>操作</th> <th width='15%'>秘密事项</th> <th width='8%'>密级</th> <th width='8%'>保密期限</th> <th width='8%'>标密部门</th><th width='8%'>知悉范围</th> <th width='10%'>涉密岗位</th><th width='8%'>标注方式</th></tr></thead><tbody>";
     for (i = 1; i < data.length; i++) {
       var row_data = data[i];
       if (!(typeof row_data[1] === "undefined")) {
         inner_str += "<tr><td><input type='radio' name='row' title=" + row_data[1] + " value='" + row_data[10] + "'/></td><td>" + row_data[1] + "</td><td>" + row_data[2] + "</td><td>" + row_data[3] + "</td><td>" + row_data[4] + "</td><td>" + row_data[5] + "</td>" +
                 "<td>" + row_data[6] +
-                "</td><td>" + row_data[7] + "</td><td>" + row_data[8] + "</td><td>" + row_data[9] +
+//                "</td><td>" + row_data[7] + "</td><td>" + row_data[8] + "</td><td>" + row_data[9] +
                 "</td><td>" + row_data[10] + "</td></tr>"
       }
 
@@ -125,7 +126,7 @@
 
         /* write workbook */
         XLSX.writeFile(wb, filename);
-        document.getElementById('fileurl').innerHTML = '<a href="./' + filename + '">下载Excel文档</a>';
+//        document.getElementById('fileurl').innerHTML = '<a href="./' + filename + '">下载Excel文档</a>';
 
         break
       }
