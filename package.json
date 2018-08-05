@@ -1,0 +1,29 @@
+{
+  "build": {
+    "appId": "create_doc",
+    "mac": {
+      "category": "doc"
+    }
+  },
+  "name": "electric_power_company",
+  "version": "1.0.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "start": "electron ."
+  },
+  "keywords": [
+    "Electron",
+    "quick",
+    "start"
+  ],
+  "author": "Chen Liang",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^2.0.0",
+    "electron-packager": "^12.1.0"
+  },
+  "postinstall": "electron-builder install-app-deps"
+}
