@@ -1,0 +1,56 @@
+/* Table Head */
+#example thead th {
+    background-color: rgb(156, 186, 95);
+    font-size: 15px;
+    color: #fff;
+    border-bottom-width: 0;
+}
+
+/* Column Style */
+#example td {
+    color: #000;
+}
+/* Heading and Column Style */
+#example tr, #example th {
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(156, 186, 95);
+}
+
+/* Padding and font style */
+#example td, #example th {
+    padding: 5px 10px;
+    font-size: 14px;
+    font-family: Verdana;
+    font-weight: bold;
+}
+
+
+#example, th, td
+{
+    border: 1px solid grey;
+    text-align:center;
+
+}
+
+#word {
+    background-color: red;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#excel {
+    background-color: blue;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
