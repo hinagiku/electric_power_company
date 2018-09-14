@@ -1,8 +1,12 @@
 /* Padding and font style */
-#myTable td, #myTable th {
+#myTable th {
     padding: 5px 5px;
     font-size: 12px;
     font-weight: bold;
+}
+#myTable td {
+    padding: 5px 5px;
+    font-size: 12px;
 }
 #word {
     background-color: red;
