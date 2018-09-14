@@ -161,7 +161,7 @@
 
                 /* write workbook */
                 XLSX.writeFile(wb, filename);
-                document.getElementById('excel').setAttribute('onclick', "location='" + filename + "'");
+                document.getElementById('excel').setAttribute('onclick', "window.location.href='" + filename + "'");
 //                  send_xlsx_file(XLSX,filename);
 //        document.getElementById('fileurl').innerHTML = '<a href="./' + filename + '">下载Excel文档</a>';
 
