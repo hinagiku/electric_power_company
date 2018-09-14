@@ -6,95 +6,134 @@
 <script src="./assets/shim.min.js"></script>
 <script src="./assets/xlsx.full.min.js"></script>
 
-<link href="./assets/table.css" rel="stylesheet" type="text/css" />
+<link href="./assets/table.css" rel="stylesheet" type="text/css"/>
+<script src="./assets/jquery-3.3.1.js"></script>
+<script src="./assets/jquery.dataTables.min.js"></script>
+<link href="./assets/jquery.dataTables.min.css" rel="stylesheet" type="text/css"/>
 <button id="word" class="green">下载Word文档</button>
-<button id="excel" class="green">生成Excel文档</button>
+<button id="excel" class="green">下载Excel文档</button>
+<!--<input type="hidden" id="filename">-->
 <!--<div id="fileurl"></div>-->
 
-<div id="example"></div>
-
+<div id="out_div"></div>
 
 <script>
-  var fs = require('fs');
-  var Papa = require("./assets/papaparse.js");
-  var table = document.getElementById("example");
-  var data = [];
-  var readStream = fs.createReadStream(__dirname + '/文档值列表.csv', 'utf8');
-  var csvStream = readStream.pipe(Papa.parse(Papa.NODE_STREAM_INPUT));
-  csvStream.on('data', function (item) {
-    data.push(item);
-  });
-  csvStream.on('end', function () {
+    var fs = require('fs');
+    var Papa = require("./assets/papaparse.js");
+    var table = document.getElementById("out_div");
+    var data = [];
+    var readStream = fs.createReadStream(__dirname + '/文档值列表.csv', 'utf8');
+    var csvStream = readStream.pipe(Papa.parse(Papa.NODE_STREAM_INPUT));
+    csvStream.on('data', function (item) {
+        data.push(item);
+    });
+    csvStream.on('end', function () {
 //    var inner_str = "<table id='example' class='display' style='width:100%'> <thead> <tr> <th width='2%'>操作</th> <th width='15%'>秘密事项</th> <th width='8%'>密级</th> <th width='8%'>保密期限</th> <th width='8%'>标密部门</th><th width='8%'>知悉范围</th> <th width='10%'>涉密岗位</th><th width='10%'>相关文件或材料</th><th width='10%'>报送方向</th><th width='10%'>报送频率及形式</th><th width='8%'>标注方式</th></tr></thead><tbody>";
-    var inner_str = "<table id='example' class='display' style='width:100%'> <thead> <tr> <th width='2%'>操作</th> <th width='15%'>秘密事项</th> <th width='8%'>密级</th> <th width='8%'>保密期限</th> <th width='8%'>标密部门</th><th width='8%'>知悉范围</th> <th width='10%'>涉密岗位</th><th width='8%'>标注方式</th></tr></thead><tbody>";
-    for (i = 1; i < data.length; i++) {
-      var row_data = data[i];
-      if (!(typeof row_data[1] === "undefined")) {
-        inner_str += "<tr><td><input type='radio' name='row' title=" + row_data[1] + " value='" + row_data[10] + "'/></td><td>" + row_data[1] + "</td><td>" + row_data[2] + "</td><td>" + row_data[3] + "</td><td>" + row_data[4] + "</td><td>" + row_data[5] + "</td>" +
-                "<td>" + row_data[6] +
+        var inner_str = "<table id='myTable'  style='width:100%'> <thead> <tr> <th width='2%'>操作</th> <th width='15%'>秘密事项</th> <th width='8%'>密级</th> <th width='8%'>保密期限</th> <th width='8%'>标密部门</th><th width='8%'>知悉范围</th> <th width='10%'>涉密岗位</th><th width='8%'>标注方式</th></tr></thead><tbody>";
+        for (i = 1; i < data.length; i++) {
+            var row_data = data[i];
+            if (!(typeof row_data[1] === "undefined")) {
+                inner_str += "<tr><td><input onclick='change_filename()' type='radio' name='row' title=" + row_data[1] + " value='" + row_data[10] + "'/></td><td>" + row_data[1] + "</td><td>" + row_data[2] + "</td><td>" + row_data[3] + "</td><td>" + row_data[4] + "</td><td>" + row_data[5] + "</td>" +
+                        "<td>" + row_data[6] +
 //                "</td><td>" + row_data[7] + "</td><td>" + row_data[8] + "</td><td>" + row_data[9] +
-                "</td><td>" + row_data[10] + "</td></tr>"
-      }
+                        "</td><td>" + row_data[10] + "</td></tr>"
+            }
 
-    }
-    table.innerHTML = table.innerHTML + inner_str + "</tbody></table>";
-  });
-  var wBtn = document.getElementById('word');
-  wBtn.onclick = function () {
-    var objs=document.getElementsByName('row');
-    for(i=0;i<objs.length;i++){
-      if(objs[i].checked == true){
-        var title = objs[i].getAttribute('title');
-        var value = objs[i].getAttribute('value');
-        function loadFile(url,callback){
-          JSZipUtils.getBinaryContent(url,callback);
+        }
+        table.innerHTML = table.innerHTML + inner_str + "</tbody></table>";
+        dd();
+    });
+
+    var wBtn = document.getElementById('word');
+    wBtn.onclick = function () {
+        var objs = document.getElementsByName('row');
+        for (i = 0; i < objs.length; i++) {
+            if (objs[i].checked == true) {
+                var title = objs[i].getAttribute('title');
+                var value = objs[i].getAttribute('value');
+
+                function loadFile(url, callback) {
+                    JSZipUtils.getBinaryContent(url, callback);
+                }
+
+                loadFile("./template.docx", function (error, content) {
+                    if (error) {
+                        throw error
+                    }
+                    var zip = new JSZip(content);
+                    var doc = new Docxtemplater().loadZip(zip);
+                    doc.setData({
+                        code: value
+                    });
+
+                    try {
+                        // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+                        doc.render()
+                    }
+                    catch (error) {
+                        var e = {
+                            message: error.message,
+                            name: error.name,
+                            stack: error.stack,
+                            properties: error.properties
+                        };
+                        console.log(JSON.stringify({error: e}));
+                        // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
+                        throw error;
+                    }
+
+                    var out = doc.getZip().generate({
+                        type: "blob",
+                        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    }); //Output the document using Data-URI
+                    saveAs(out, title + ".docx")
+                });
+                break
+            }
         }
 
-        loadFile("./template.docx",function(error,content){
-          if (error) { throw error }
-          var zip = new JSZip(content);
-          var doc=new Docxtemplater().loadZip(zip);
-          doc.setData({
-            code: value
-          });
+    };
 
-          try {
-            // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
-            doc.render()
-          }
-          catch (error) {
-            var e = {
-              message: error.message,
-              name: error.name,
-              stack: error.stack,
-              properties: error.properties
-            };
-            console.log(JSON.stringify({error: e}));
-            // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
-            throw error;
-          }
-
-          var out=doc.getZip().generate({
-            type:"blob",
-            mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          }); //Output the document using Data-URI
-          saveAs(out,title+".docx")
-        });
-        break
-      }
+    //    function send_xlsx_file(XLSX,filename){
+    //        var url = "./"+filename;
+    //
+    //        var oReq;
+    //        if(window.XMLHttpRequest) oReq = new XMLHttpRequest();
+    //        else if(window.ActiveXObject) oReq = new ActiveXObject('MSXML2.XMLHTTP.3.0');
+    //        else throw "XHR unavailable for your browser";
+    //
+    //        oReq.open("GET", url, true);
+    //
+    //        oReq.send();
+    //    }
+    var fs = require('fs'); // 引入fs模块
+    function deleteall(path) {
+        var files = [];
+        if (fs.existsSync(path)) {
+            files = fs.readdirSync(path);
+            files.forEach(function (file, index) {
+                var curPath = path + "/" + file;
+                if (fs.statSync(curPath).isDirectory()) { // recurse
+                    deleteall(curPath);
+                } else { // delete file
+                    fs.unlinkSync(curPath);
+                }
+            });
+//          fs.rmdirSync(path);
+        }
     }
 
-  };
 
+    function change_filename() {
+        deleteall('excel_files');
 
-
-  var eBtn = document.getElementById('excel');
-  eBtn.onclick = function () {
-    var objs=document.getElementsByName('row');
-    for(i=0;i<objs.length;i++){
-      if(objs[i].checked == true){
-        var title = objs[i].getAttribute('title');
-        var value = objs[i].getAttribute('value');
+//      var eBtn = document.getElementById('excel');
+//      eBtn.onclick = function () {
+        var objs = document.getElementsByName('row');
+        for (i = 0; i < objs.length; i++) {
+            if (objs[i].checked == true) {
+                var title = objs[i].getAttribute('title');
+                var value = objs[i].getAttribute('value');
 //        var Excel = require('exceljs');
 //        var workbook = new Excel.Workbook();
 //        var sheet = workbook.addWorksheet('My Sheet');
@@ -109,24 +148,72 @@
 //                  // done
 //                });
 
-        var XLSX = require('./assets/xlsx.full.min.js');
+                var XLSX = require('./assets/xlsx.full.min.js');
 
-        var filename = title+".xlsx";
-        var data = [[value]];
-        var ws_name = "Sheet";
+                var filename = 'excel_files/' + title + ".xlsx";
+                var data = [[value]];
+                var ws_name = "Sheet";
 
-        var wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(data);
+                var wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(data);
 
-        /* add worksheet to workbook */
-        XLSX.utils.book_append_sheet(wb, ws, ws_name);
+                /* add worksheet to workbook */
+                XLSX.utils.book_append_sheet(wb, ws, ws_name);
 
-        /* write workbook */
-        XLSX.writeFile(wb, filename);
+                /* write workbook */
+                XLSX.writeFile(wb, filename);
+                document.getElementById('excel').setAttribute('onclick', "location='" + filename + "'");
+//                  send_xlsx_file(XLSX,filename);
 //        document.getElementById('fileurl').innerHTML = '<a href="./' + filename + '">下载Excel文档</a>';
 
-        break
-      }
+                break
+            }
+        }
+//      };
+//      var radio = document.getElementsByName("row");
+//      /*用ByName是为了取到所有的radio*/
+//      var radioLength = radio.length;
+//      for(var i = 0;i < radioLength;i++) {
+//          if (radio[i].checked) {
+//              var filename = './'+radio[i].getAttribute('title')+'.xlsx';
+//              console.log(filename);
+//              document.getElementById('excel').setAttribute('onclick', "location='"+ filename +"'");
+//              console.log(document.getElementById('excel').getAttribute('onclick'));
+//          }
+//      }
     }
-  };
+
+</script>
+<script>
+    var oLanguage = {
+        "oAria": {
+            "sSortAscending": ": 升序排列",
+            "sSortDescending": ": 降序排列"
+        },
+        "oPaginate": {
+            "sFirst": "首页",
+            "sLast": "末页",
+            "sNext": "下页",
+            "sPrevious": "上页"
+        },
+        "sEmptyTable": "没有相关记录",
+        "sInfo": "第 _START_ 到 _END_ 条记录，共 _TOTAL_ 条",
+        "sInfoEmpty": "第 0 到 0 条记录，共 0 条",
+        "sInfoFiltered": "(从 _MAX_ 条记录中检索)",
+        "sInfoPostFix": "",
+        "sDecimal": "",
+        "sThousands": ",",
+        "sLengthMenu": "每页显示条数: _MENU_",
+        "sLoadingRecords": "正在载入...",
+        "sProcessing": "正在载入...",
+        "sSearch": "搜索:",
+        "sSearchPlaceholder": "",
+        "sUrl": "",
+        "sZeroRecords": "没有相关记录"
+    };
+    function dd() {
+        $('#myTable').DataTable(
+        );
+    }
+    $.fn.dataTable.defaults.oLanguage = oLanguage;
 </script>
 
