@@ -10,8 +10,10 @@
 <script src="./assets/jquery-3.3.1.js"></script>
 <script src="./assets/jquery.dataTables.min.js"></script>
 <link href="./assets/jquery.dataTables.min.css" rel="stylesheet" type="text/css"/>
-<button id="word" class="green">下载Word文档</button>
-<button id="excel" class="green">下载Excel文档</button>
+<!--<button id="word" class="green">下载Word文档</button>-->
+<!--<button id="excel" class="green">下载Excel文档</button>-->
+<a id="word" style="cursor:pointer;">下载Word文档</a>
+<a id="excel" href="" download style="cursor:pointer;">下载Excel文档</a>
 <!--<input type="hidden" id="filename">-->
 <!--<div id="fileurl"></div>-->
 
@@ -161,7 +163,7 @@
 
                 /* write workbook */
                 XLSX.writeFile(wb, filename);
-                document.getElementById('excel').setAttribute('onclick', "window.location.href='" + filename + "'");
+                document.getElementById('excel').setAttribute('href', filename);
 //                  send_xlsx_file(XLSX,filename);
 //        document.getElementById('fileurl').innerHTML = '<a href="./' + filename + '">下载Excel文档</a>';
 
