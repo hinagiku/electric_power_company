@@ -13,7 +13,8 @@
 <!--<button id="word" class="green">下载Word文档</button>-->
 <!--<button id="excel" class="green">下载Excel文档</button>-->
 <a id="word" style="cursor:pointer;">下载Word文档</a>
-<a id="excel" href="" download style="cursor:pointer;">下载Excel文档</a>
+<!--<a id="excel" href="" style="cursor:pointer;">下载Excel文档</a>-->
+<input id="excel" type="button" value="下载Excel文档" onclick="">
 <!--<input type="hidden" id="filename">-->
 <!--<div id="fileurl"></div>-->
 
@@ -163,7 +164,8 @@
 
                 /* write workbook */
                 XLSX.writeFile(wb, filename);
-                document.getElementById('excel').setAttribute('href', filename);
+//                document.getElementById('excel').setAttribute('href', filename);
+                document.getElementById('excel').setAttribute('onclick', "window.location='"+ filename +"'");
 //                  send_xlsx_file(XLSX,filename);
 //        document.getElementById('fileurl').innerHTML = '<a href="./' + filename + '">下载Excel文档</a>';
 
