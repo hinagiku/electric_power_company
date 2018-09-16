@@ -7,5 +7,6 @@ sudo apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/
 sudo apt-get update
 sudo apt-get install --install-recommends winehq-stable
 sudo npm install electron-packager -g
-electron-packager ./ electric_power_company --platform=win32
+electron-packager ./ electric_power_company --platform=win32 --icon=logo.icns
 electron-packager /home/bsfx/electron-quick-start/ electric_power_company --platform=windows
+electron-packager . electric_power_company --overwrite --asar=true --platform=win32 --arch=ia32 --icon=logo.icns --prune=true --out=release-builds
