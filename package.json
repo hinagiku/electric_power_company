@@ -22,7 +22,7 @@
   "author": "Chen Liang",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^2.0.0",
+    "electron": ">=2.0.8",
     "electron-packager": "^12.1.0"
   },
   "postinstall": "electron-builder install-app-deps"
